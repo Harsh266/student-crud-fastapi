@@ -2,14 +2,19 @@ from fastapi import APIRouter, HTTPException, Path, Query, Response, status
 
 from controllers import student_controller
 from controllers.student_controller import DuplicateEmailError, StudentNotFoundError
-from models.student_model import Student, StudentCreate, StudentUpdate
+from models.student_model import (
+    StudentCreate,
+    StudentListResponse,
+    StudentResponse,
+    StudentUpdate,
+)
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
 StudentId = Path(..., gt=0)
 
 
-@router.post("", response_model=Student, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=StudentResponse, status_code=status.HTTP_201_CREATED)
 def create_student(student: StudentCreate):
     try:
         return student_controller.create_student(student)
@@ -17,7 +22,7 @@ def create_student(student: StudentCreate):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.get("", status_code=status.HTTP_200_OK)
+@router.get("", response_model=StudentListResponse, status_code=status.HTTP_200_OK)
 def get_all_students(
     name: str | None = Query(None),
     course: str | None = Query(None),
@@ -29,7 +34,7 @@ def get_all_students(
     return student_controller.paginate_students(filtered, page=page, limit=limit)
 
 
-@router.get("/{id}", response_model=Student, status_code=status.HTTP_200_OK)
+@router.get("/{id}", response_model=StudentResponse, status_code=status.HTTP_200_OK)
 def get_student(id: int = StudentId):
     try:
         return student_controller.get_student_by_id(id)
@@ -37,7 +42,7 @@ def get_student(id: int = StudentId):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.put("/{id}", response_model=Student, status_code=status.HTTP_200_OK)
+@router.put("/{id}", response_model=StudentResponse, status_code=status.HTTP_200_OK)
 def update_student(student: StudentUpdate, id: int = StudentId):
     try:
         return student_controller.update_student(id, student)

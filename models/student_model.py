@@ -30,3 +30,23 @@ class Student(StudentBase):
     """A stored student record."""
 
     id: int
+
+
+class StudentResponse(BaseModel):
+    """A single student as returned by the API."""
+
+    id: int
+    name: str
+    email: EmailStr
+    course: str
+    semester: int
+
+
+class StudentListResponse(BaseModel):
+    """A paginated, optionally filtered list of students."""
+
+    page: int
+    limit: int
+    total: int
+    total_pages: int
+    students: list[StudentResponse]
