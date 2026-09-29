@@ -70,6 +70,7 @@ student-crud-fastapi/
 │   └── js/app.js                  # Calls the REST API with fetch() and renders the UI
 │
 ├── requirements.txt
+├── render.yaml                    # Render deployment blueprint
 └── README.md
 ```
 
@@ -125,6 +126,24 @@ python main.py
 | **Delete** | **Delete** (trash) → confirm **Delete Student** | `DELETE /students/{id}` |
 
 The search box, **Course** and **Semester** filters, and **Rows per page** / page buttons send the `name`, `course`, `semester`, `page` and `limit` query parameters to `GET /students`. Validation, duplicate-email, not-found and connection errors are shown as plain-language messages. The layout adapts to desktop, tablet and mobile.
+
+### Deploying to Render
+
+The repository includes a [`render.yaml`](render.yaml) blueprint, so Render can configure the service automatically:
+
+1. Sign in at https://dashboard.render.com with GitHub.
+2. Click **New → Blueprint**, pick the `student-crud-fastapi` repository, and click **Apply**.
+3. Wait for the first deploy to finish (about 2–3 minutes), then open the service URL shown in Render: the dashboard is at `/`, Swagger at `/docs`.
+
+| Setting | Value |
+|---------|-------|
+| Build command | `pip install -r requirements.txt` |
+| Start command | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
+| Health check | `/health` |
+| Python | 3.13.1 |
+| Auto-deploy | On every push to `main` |
+
+> **Note:** On Render's free plan the service sleeps after about 15 minutes without traffic; the next visit takes up to a minute to wake it. Because storage is in memory, **students are cleared whenever the service restarts, sleeps or redeploys**. This is expected for this assignment (no database).
 
 ## 8. Swagger Documentation
 
