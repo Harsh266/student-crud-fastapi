@@ -11,6 +11,6 @@ app = FastAPI(
 app.include_router(student_router)
 
 
-@app.get("/")
+@app.get("/", tags=["Health"], summary="API health check")
 def root():
     return {"message": "FastAPI Student CRUD API is running"}
