@@ -1,9 +1,15 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from routes.student_routes import router as student_router
 
 DESCRIPTION = """
 A simple REST API for managing university student records.
+
+> **Prefer a visual interface?** Open the Student Management dashboard at [`/`](/). It performs the same CRUD operations with forms and buttons.
 
 ### Beginner Testing Guide
 
@@ -43,9 +49,18 @@ app = FastAPI(
 
 app.include_router(student_router)
 
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-@app.get("/", tags=["Health"], summary="Check the API Is Running")
-def root():
+
+@app.get("/", include_in_schema=False)
+def dashboard():
+    """Serve the Student Management dashboard (HTML/CSS/JS that calls the API above)."""
+    return FileResponse(STATIC_DIR / "index.html")
+
+
+@app.get("/health", tags=["Health"], summary="Check the API Is Running")
+def health():
     return {"message": "FastAPI Student CRUD API is running"}
 
 

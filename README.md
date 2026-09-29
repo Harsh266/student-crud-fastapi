@@ -1,6 +1,6 @@
 # FastAPI – Student CRUD Application
 
-A REST API built with **FastAPI** for managing university student records, organised in a **Models → Routes → Controllers** architecture.
+A REST API built with **FastAPI** for managing university student records, organised in a **Models → Routes → Controllers** architecture, with a **visual Student Management dashboard** (HTML, CSS and JavaScript) that performs every CRUD operation through the API.
 
 > **This project uses local in-memory storage and does not use any database.**
 
@@ -24,6 +24,7 @@ Build a simple REST API with FastAPI that:
 
 ## 3. Features
 
+- **Student Management dashboard** at `/`: statistics, a student table, search, filters, pagination, and Add/View/Edit/Delete modals, all powered by the REST API
 - The five required CRUD endpoints
 - Student IDs generated automatically (1, 2, 3, …) and never reused
 - Pydantic validation: required fields, a valid email, a non-empty name and course, and a semester from 1 to 12
@@ -47,9 +48,9 @@ Build a simple REST API with FastAPI that:
 ## 5. Project Structure
 
 ```
-student-crud-fastap/
+student-crud-fastapi/
 │
-├── main.py                        # Creates the FastAPI app and includes the student router
+├── main.py                        # Creates the FastAPI app, includes the student router, serves the dashboard
 │
 ├── models/
 │   ├── __init__.py
@@ -63,6 +64,11 @@ student-crud-fastap/
 │   ├── __init__.py
 │   └── student_controller.py      # CRUD/business logic on the in-memory collection
 │
+├── static/                        # Frontend dashboard (no framework, no build step)
+│   ├── index.html                 # Page layout: sidebar, statistics, table, modals
+│   ├── css/style.css              # Styles and responsive layout
+│   └── js/app.js                  # Calls the REST API with fetch() and renders the UI
+│
 ├── requirements.txt
 └── README.md
 ```
@@ -72,13 +78,14 @@ student-crud-fastap/
 | **Models** | Define the Pydantic models (`StudentCreate`, `StudentUpdate`, `Student`, `StudentResponse`, `StudentListResponse`, `ErrorResponse`) and their validation rules |
 | **Controllers** | Hold the in-memory `students` dictionary and the create, read, update, delete, filter and paginate logic. Raise `StudentNotFoundError` or `DuplicateEmailError` when a request can't be completed |
 | **Routes** | Define the endpoints, HTTP methods and request/response models. Call the controller and turn its errors into HTTP responses (`404`, `400`) |
-| **main.py** | Creates the FastAPI app and includes the student router |
+| **main.py** | Creates the FastAPI app, includes the student router, and serves the dashboard (`/`) and its static files (`/static`) |
+| **static/** | The dashboard frontend. It stores no data itself: every action is a `fetch()` call to the `/students` API |
 
 ## 6. Installation
 
 ```bash
-git clone https://github.com/Harsh266/student-crud-fastap.git
-cd student-crud-fastap
+git clone https://github.com/Harsh266/student-crud-fastapi.git
+cd student-crud-fastapi
 
 # optional: create a virtual environment
 python -m venv venv
@@ -92,13 +99,32 @@ pip install -r requirements.txt
 
 ```bash
 uvicorn main:app --reload
+# or
+python main.py
 ```
 
-The API runs at **http://127.0.0.1:8000**. `GET /` returns:
+| Page | URL |
+|------|-----|
+| **Student Management dashboard** | http://127.0.0.1:8000/ |
+| Swagger UI (API docs) | http://127.0.0.1:8000/docs |
+| Health check | http://127.0.0.1:8000/health |
+
+`GET /health` returns:
 
 ```json
 { "message": "FastAPI Student CRUD API is running" }
 ```
+
+### Using the dashboard
+
+| CRUD | In the dashboard | API call |
+|------|------------------|----------|
+| **Create** | **+ Add Student** → fill in the form → **Create Student** | `POST /students` |
+| **Read** | The student table, and the **View** (eye) button for details | `GET /students`, `GET /students/{id}` |
+| **Update** | **Edit** (pencil) → change fields → **Save Changes** | `GET /students/{id}` then `PUT /students/{id}` |
+| **Delete** | **Delete** (trash) → confirm **Delete Student** | `DELETE /students/{id}` |
+
+The search box, **Course** and **Semester** filters, and **Rows per page** / page buttons send the `name`, `course`, `semester`, `page` and `limit` query parameters to `GET /students`. Validation, duplicate-email, not-found and connection errors are shown as plain-language messages. The layout adapts to desktop, tablet and mobile.
 
 ## 8. Swagger Documentation
 
@@ -328,7 +354,7 @@ The project uses no MongoDB, MySQL, PostgreSQL, SQLite, Firebase, Redis, SQLAlch
 
 | | |
 |---|---|
-| **Repository** | https://github.com/Harsh266/student-crud-fastap |
+| **Repository** | https://github.com/Harsh266/student-crud-fastapi |
 | **Branch** | `main` |
 | **Author** | Harsh Vekariya ([@Harsh266](https://github.com/Harsh266)) |
 | **Course** | Principles of DevOps and Web API Development (Semester 7) |
@@ -356,6 +382,8 @@ The project was built one step at a time, with each step tested, committed and p
 | 15 | `cdb32b8` | Add structured API response models |
 | 16 | `7f23683` | Improve API documentation |
 | 17 | `5ff6309` | Add project documentation |
-| 18 | — | Update README |
+| 18 | `5230aa8` | Update README |
+| 19 | `04d5278` | Improve Swagger API documentation |
+| 20 | — | Create professional student CRUD dashboard |
 
-View the full history at https://github.com/Harsh266/student-crud-fastap/commits/main
+View the full history at https://github.com/Harsh266/student-crud-fastapi/commits/main
