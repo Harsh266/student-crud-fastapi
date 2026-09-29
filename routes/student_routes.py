@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from controllers import student_controller
 from controllers.student_controller import StudentNotFoundError
-from models.student_model import Student, StudentCreate
+from models.student_model import Student, StudentCreate, StudentUpdate
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
@@ -21,5 +21,13 @@ def get_all_students():
 def get_student(id: int):
     try:
         return student_controller.get_student_by_id(id)
+    except StudentNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.put("/{id}", response_model=Student, status_code=status.HTTP_200_OK)
+def update_student(id: int, student: StudentUpdate):
+    try:
+        return student_controller.update_student(id, student)
     except StudentNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
