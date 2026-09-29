@@ -17,13 +17,16 @@ def create_student(student: StudentCreate):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.get("", response_model=list[Student], status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 def get_all_students(
     name: str | None = Query(None),
     course: str | None = Query(None),
     semester: int | None = Query(None, gt=0),
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, gt=0, le=100),
 ):
-    return student_controller.get_all_students(name=name, course=course, semester=semester)
+    filtered = student_controller.get_all_students(name=name, course=course, semester=semester)
+    return student_controller.paginate_students(filtered, page=page, limit=limit)
 
 
 @router.get("/{id}", response_model=Student, status_code=status.HTTP_200_OK)

@@ -55,6 +55,19 @@ def get_all_students(
     return result
 
 
+def paginate_students(items: list[Student], page: int, limit: int) -> dict:
+    """Slice a list of students into one page and return page metadata."""
+    total = len(items)
+    start = (page - 1) * limit
+    return {
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "total_pages": (total + limit - 1) // limit,
+        "students": items[start:start + limit],
+    }
+
+
 def get_student_by_id(student_id: int) -> Student:
     student = students.get(student_id)
     if student is None:
