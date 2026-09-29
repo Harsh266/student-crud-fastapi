@@ -326,9 +326,36 @@ The project uses no MongoDB, MySQL, PostgreSQL, SQLite, Firebase, Redis, SQLAlch
 
 ## 19. GitHub Project Information
 
-- **Repository:** https://github.com/Harsh266/student-crud-fastap
-- **Branch:** `main`
-- **Author:** Harsh Vekariya
-- **Course:** Principles of DevOps and Web API Development (Semester 7)
+| | |
+|---|---|
+| **Repository** | https://github.com/Harsh266/student-crud-fastap |
+| **Branch** | `main` |
+| **Author** | Harsh Vekariya ([@Harsh266](https://github.com/Harsh266)) |
+| **Course** | Principles of DevOps and Web API Development (Semester 7) |
 
-The project was built step by step, with one commit per step (setup, dependencies, models, controller, each of the five APIs, integration, validation, bonus features, and documentation).
+### Development History
+
+The project was built one step at a time, with each step tested, committed and pushed separately:
+
+| # | Commit | Step |
+|---|--------|------|
+| 1 | `919518d` | Initial FastAPI project setup |
+| 2 | `6da3941` | Add project dependencies |
+| 3 | `844bf6f` | Add .gitignore |
+| 4 | `6352353` | Add student Pydantic models |
+| 5 | `5495dcf` | Add student CRUD controller logic |
+| 6 | `746eade` | Add create student API |
+| 7 | `0cc691c` | Add get all students API |
+| 8 | `ee84711` | Add get student by ID API |
+| 9 | `4e347b1` | Add update student API |
+| 10 | `5c07044` | Add delete student API |
+| 11 | `db1a29d` | Integrate student CRUD routes |
+| 12 | `09ae48d` | Improve validation and error handling |
+| 13 | `1cab15c` | Add student search and filtering |
+| 14 | `784342d` | Add student pagination |
+| 15 | `cdb32b8` | Add structured API response models |
+| 16 | `7f23683` | Improve API documentation |
+| 17 | `5ff6309` | Add project documentation |
+| 18 | — | Update README |
+
+View the full history at https://github.com/Harsh266/student-crud-fastap/commits/main
