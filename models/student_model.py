@@ -11,10 +11,10 @@ STUDENT_EXAMPLE = {
 class StudentBase(BaseModel):
     """Fields shared by every student model."""
 
-    name: str = Field(..., min_length=1, max_length=100, description="Student full name")
-    email: EmailStr = Field(..., description="Valid student email address (must be unique)")
-    course: str = Field(..., min_length=1, max_length=100, description="Course/program name")
-    semester: int = Field(..., gt=0, le=12, description="Current semester (1-12)")
+    name: str = Field(..., min_length=1, max_length=100, description="Full name of the student.", examples=["Rahul Patel"])
+    email: EmailStr = Field(..., description="Student email address. Must be unique.", examples=["rahul@example.com"])
+    course: str = Field(..., min_length=1, max_length=100, description="Student's course or program.", examples=["B.Tech Computer Engineering"])
+    semester: int = Field(..., gt=0, le=12, description="Current semester. Allowed values: 1 to 12.", examples=[5])
 
     @field_validator("name", "course")
     @classmethod
@@ -48,11 +48,11 @@ class Student(StudentBase):
 class StudentResponse(BaseModel):
     """A single student as returned by the API."""
 
-    id: int = Field(..., description="Unique student ID")
-    name: str = Field(..., description="Student full name")
-    email: EmailStr = Field(..., description="Student email address")
-    course: str = Field(..., description="Course/program name")
-    semester: int = Field(..., description="Current semester")
+    id: int = Field(..., description="Unique ID of the student (created automatically).")
+    name: str = Field(..., description="Full name of the student.")
+    email: EmailStr = Field(..., description="Student email address.")
+    course: str = Field(..., description="Student's course or program.")
+    semester: int = Field(..., description="Current semester.")
 
     model_config = ConfigDict(json_schema_extra={"examples": [{"id": 1, **STUDENT_EXAMPLE}]})
 
@@ -60,11 +60,11 @@ class StudentResponse(BaseModel):
 class StudentListResponse(BaseModel):
     """A paginated, optionally filtered list of students."""
 
-    page: int = Field(..., description="Current page number")
-    limit: int = Field(..., description="Maximum students per page")
-    total: int = Field(..., description="Total students matching the filters")
-    total_pages: int = Field(..., description="Total number of pages")
-    students: list[StudentResponse] = Field(..., description="Students on this page")
+    page: int = Field(..., description="Current page number.")
+    limit: int = Field(..., description="Maximum number of students per page.")
+    total: int = Field(..., description="Total number of students that match your search/filters.")
+    total_pages: int = Field(..., description="Total number of pages.")
+    students: list[StudentResponse] = Field(..., description="The students on this page.")
 
 
 class ErrorResponse(BaseModel):
