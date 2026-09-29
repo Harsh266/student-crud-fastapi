@@ -192,7 +192,7 @@ function showSkeleton() {
   const row = `
     <tr class="skeleton-row">
       <td><span class="skeleton" style="width:24px"></span></td>
-      <td><div class="cell-student"><span class="skeleton skeleton-circle"></span><span class="skeleton" style="width:120px"></span></div></td>
+      <td><div class="cell-student"><span class="skeleton skeleton-circle"></span><span class="skeleton-stack"><span class="skeleton" style="width:120px"></span><span class="skeleton" style="width:80px;height:10px"></span></span></div></td>
       <td><span class="skeleton" style="width:150px"></span></td>
       <td><span class="skeleton" style="width:130px"></span></td>
       <td><span class="skeleton" style="width:50px"></span></td>
@@ -246,7 +246,7 @@ function renderStudents(data, highlightId) {
     <tr data-id="${s.id}" class="${s.id === highlightId ? "is-new" : ""}">
       <td class="cell-id" data-label="ID">#${s.id}</td>
       <td class="cell-student-td" data-label="Student">
-        <div class="cell-student">${avatar(s.name)}<strong>${escapeHtml(s.name)}</strong></div>
+        <div class="cell-student">${avatar(s.name)}<span class="student-meta"><strong>${escapeHtml(s.name)}</strong><span class="student-sub">${escapeHtml(s.course)}</span></span></div>
       </td>
       <td class="cell-email" data-label="Email">${escapeHtml(s.email)}</td>
       <td class="cell-course-td" data-label="Course"><span class="badge badge-course">${escapeHtml(s.course)}</span></td>
@@ -275,15 +275,15 @@ function renderEmpty() {
   if (hasFilters()) {
     panel.innerHTML = `
       <span class="state-icon">${icon("search")}</span>
-      <h3>No matching students found</h3>
-      <p>No student matches your search or filters. Try different values or clear the filters.</p>
+      <h3>No matching students</h3>
+      <p>Try changing your search or filters.</p>
       <button class="btn btn-secondary" type="button" data-action="clear-filters">Clear Filters</button>`;
   } else {
     panel.innerHTML = `
       <span class="state-icon">${icon("users")}</span>
       <h3>No Students Found</h3>
-      <p>There are currently no student records. Add your first student to get started.</p>
-      <button class="btn btn-primary" type="button" data-action="add">${icon("user-plus")} Add Student</button>`;
+      <p>There are currently no student records.</p>
+      <button class="btn btn-primary" type="button" data-action="add">${icon("plus")} Add Student</button>`;
   }
 }
 
@@ -337,11 +337,11 @@ function renderPagination(data) {
 
   const total = Math.max(data.total_pages, 1);
   const buttons = [
-    `<button class="page-btn" type="button" data-page="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""} aria-label="Previous page">${icon("chev-left", "icon icon-sm")} Previous</button>`,
+    `<button class="page-btn" type="button" data-page="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""} aria-label="Previous page">${icon("chev-left", "icon icon-sm")}</button>`,
     ...pageNumbers(data.page, total).map((p) => p === "gap"
       ? `<span class="page-gap">…</span>`
       : `<button class="page-btn ${p === data.page ? "is-current" : ""}" type="button" data-page="${p}" ${p === data.page ? 'aria-current="page"' : ""} aria-label="Page ${p}">${p}</button>`),
-    `<button class="page-btn" type="button" data-page="${data.page + 1}" ${data.page >= total ? "disabled" : ""} aria-label="Next page">Next ${icon("chev-right", "icon icon-sm")}</button>`,
+    `<button class="page-btn" type="button" data-page="${data.page + 1}" ${data.page >= total ? "disabled" : ""} aria-label="Next page">${icon("chev-right", "icon icon-sm")}</button>`,
   ];
   $("#pager").innerHTML = buttons.join("");
 }
@@ -507,7 +507,7 @@ async function submitStudentForm(event) {
 
     dialog.dataset.busy = "false";
     dialog.close();
-    toast("success", isEdit ? "✓ Student updated successfully" : "✓ Student created successfully",
+    toast("success", isEdit ? "Student updated successfully" : "Student created successfully",
       `${student.name} (ID ${student.id})`);
 
     if (!isEdit && state.lastList) {
@@ -609,7 +609,7 @@ async function confirmDelete() {
   dialog.dataset.busy = "true";
   try {
     await request("DELETE", `${API}/${deletingId}`);
-    toast("success", "✓ Student deleted successfully", `${name} was removed.`);
+    toast("success", "Student deleted successfully", `${name} was removed.`);
   } catch (error) {
     toastError(error);
   } finally {
@@ -624,9 +624,9 @@ async function confirmDelete() {
    API status + refresh
    --------------------------------------------------------- */
 function setApiStatus(online) {
-  const box = $("#api-status");
-  box.dataset.state = online ? "online" : "offline";
-  $("#api-status-text").textContent = online ? "API connected" : "API not reachable";
+  // The status appears in both the sidebar and the top header
+  document.querySelectorAll("[data-api-status]").forEach((el) => { el.dataset.state = online ? "online" : "offline"; });
+  document.querySelectorAll("[data-api-status-text]").forEach((el) => { el.textContent = online ? "API connected" : "API not reachable"; });
 }
 
 async function checkHealth() {
