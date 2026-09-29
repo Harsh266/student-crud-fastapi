@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Path, Response, status
+from fastapi import APIRouter, HTTPException, Path, Query, Response, status
 
 from controllers import student_controller
 from controllers.student_controller import DuplicateEmailError, StudentNotFoundError
@@ -18,8 +18,12 @@ def create_student(student: StudentCreate):
 
 
 @router.get("", response_model=list[Student], status_code=status.HTTP_200_OK)
-def get_all_students():
-    return student_controller.get_all_students()
+def get_all_students(
+    name: str | None = Query(None),
+    course: str | None = Query(None),
+    semester: int | None = Query(None, gt=0),
+):
+    return student_controller.get_all_students(name=name, course=course, semester=semester)
 
 
 @router.get("/{id}", response_model=Student, status_code=status.HTTP_200_OK)

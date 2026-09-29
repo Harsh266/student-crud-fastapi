@@ -36,8 +36,23 @@ def create_student(data: StudentCreate) -> Student:
     return student
 
 
-def get_all_students() -> list[Student]:
-    return list(students.values())
+def get_all_students(
+    name: str | None = None,
+    course: str | None = None,
+    semester: int | None = None,
+) -> list[Student]:
+    """Return all students, optionally filtered.
+
+    name and course are case-insensitive partial matches; semester is exact.
+    """
+    result = list(students.values())
+    if name:
+        result = [s for s in result if name.strip().lower() in s.name.lower()]
+    if course:
+        result = [s for s in result if course.strip().lower() in s.course.lower()]
+    if semester is not None:
+        result = [s for s in result if s.semester == semester]
+    return result
 
 
 def get_student_by_id(student_id: int) -> Student:
